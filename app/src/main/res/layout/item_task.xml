@@ -1,67 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
+    android:orientation="vertical"
     android:padding="5dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="70dp">
-    <TextView
+    android:layout_height="100dp"
+    android:weightSum="2">
+    <LinearLayout
+        android:layout_weight="1"
+        android:id="@+id/upLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_reminder_name"
-        android:text="Task name"
-        android:textSize="20sp" />
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_reminder_name"
-        android:id="@+id/cb_reminder_is_done"
-        />
-    <ImageView
-        android:layout_marginLeft="5dp"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:background="@drawable/icons8_edit_48"
-        android:layout_below="@+id/tv_reminder_name"
-        android:layout_toRightOf="@+id/cb_reminder_is_done"
-        android:id="@+id/img_icon_reminder_edit"/>
-    <ImageView
-        android:layout_marginLeft="5dp"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:background="@drawable/icons8_trash_48"
-        android:layout_below="@+id/tv_reminder_name"
-        android:layout_toRightOf="@+id/img_icon_reminder_edit"
-        android:id="@+id/img_icon_reminder_delete"/>
-    <TextView
-        android:layout_marginLeft="5dp"
-        android:layout_width="70dp"
-        android:layout_height="32dp"
-        android:layout_below="@+id/tv_reminder_name"
-        android:layout_toRightOf="@+id/img_icon_reminder_delete"
-        android:textSize="15sp"
-        android:text="11:55 AM"
-        android:gravity="center"
-        android:id="@+id/tv_reminder_time"
-        />
-    <TextView
-        android:layout_marginLeft="5dp"
-        android:layout_width="90dp"
-        android:layout_height="32dp"
-        android:layout_below="@+id/tv_reminder_name"
-        android:layout_toRightOf="@+id/tv_reminder_time"
-        android:textSize="15sp"
-        android:text="20/04/2018"
-        android:gravity="center"
-        android:id="@+id/tv_reminder_date"
-        />
-    <TextView
-        android:layout_marginLeft="5dp"
-        android:layout_width="95dp"
-        android:layout_height="32dp"
-        android:layout_below="@+id/tv_reminder_name"
-        android:layout_toRightOf="@+id/tv_reminder_date"
-        android:text="Not repeat"
-        android:gravity="center"
-        android:id="@+id/tv_reminder_repeat_type"
-        />
-</RelativeLayout>
+        android:layout_height="0dp">
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/tv_reminder_name"
+            android:text="Task name"
+            android:textSize="20sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:gravity="right"
+        android:layout_weight="1"
+        android:layout_below="@id/upLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <CheckBox
+                android:layout_alignParentLeft="true"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/cb_reminder_is_done"
+                />
+
+            <TextView
+                android:layout_toRightOf="@+id/cb_reminder_is_done"
+                android:padding="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="15sp"
+                android:text="11:55"
+                android:gravity="center"
+                android:id="@+id/tv_reminder_time"
+                />
+            <TextView
+                android:layout_toRightOf="@id/tv_reminder_time"
+                android:padding="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="15sp"
+                android:text="20/04/2018"
+                android:gravity="center"
+                android:id="@+id/tv_reminder_date"
+                />
+            <TextView
+                android:layout_toRightOf="@id/tv_reminder_date"
+                android:padding="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Not repeat"
+                android:gravity="center"
+                android:id="@+id/tv_reminder_repeat_type"
+                />
+            <ImageView
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/icons8_menu_vertical_48"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:id="@+id/img_menu_item_task"/>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

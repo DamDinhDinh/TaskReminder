@@ -1,6 +1,7 @@
 package com.example.damdinhdinh.taskreminder.model;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,13 +9,19 @@ public class GroupTask implements Serializable {
     private int id;
     private String name;
     private int icon;
-    private List<Integer> arrTaskID;
+    private ArrayList<Task> arrTask;
 
-    public GroupTask(int id, String name, int icon, List<Integer> arrTaskID) {
+    public GroupTask(int id, String name, int icon, ArrayList<Task> arrTask) {
         this.id = id;
         this.name = name;
         this.icon = icon;
-        this.arrTaskID = arrTaskID;
+        this.arrTask = arrTask;
+    }
+
+    public GroupTask(){
+        id = -1;
+        name = "";
+        arrTask = new ArrayList<>();
     }
 
     public String getName() {
@@ -41,12 +48,12 @@ public class GroupTask implements Serializable {
         this.id = id;
     }
 
-    public List<Integer> getArrTask() {
-        return arrTaskID;
+    public ArrayList<Task> getArrTask() {
+        return arrTask;
     }
 
-    public void setArrTask(List<Integer> arrTaskID) {
-        this.arrTaskID = arrTaskID;
+    public void setArrTask(ArrayList<Task> arrTask) {
+        this.arrTask = arrTask;
     }
 }
 

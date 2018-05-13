@@ -17,6 +17,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".ListTaskActivity"></activity>
+        <receiver
+            android:name=".ReminderReceiver"
+            android:enabled="true"
+            android:exported="false">
+
+        </receiver>
+        <service android:name=".ReminderService"
+            android:exported="false">
+
+        </service>
     </application>
 
 </manifest>

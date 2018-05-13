@@ -3,11 +3,13 @@ package com.example.damdinhdinh.taskreminder;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,6 +21,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -61,11 +64,6 @@ public class ListTaskActivity extends AppCompatActivity {
         groupTaskID = intent.getIntExtra("groupTask_id", -1);
 
         database = new DatabaseSQLite(ListTaskActivity.this, "task.sqlite", null, 1);
-        String createTable = "CREATE TABLE IF NOT EXISTS task(task_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "task_name VARCHAR(200), task_describe VARCHAR (200), task_day INTEGER(2), task_month INTEGER(2), " +
-                "task_year INTEGER, task_hour INTEGER(2), task_minute INTEGER(2), task_repeat INTEGER(1), " +
-                "task_notify INTEGER(1), groupTask_id INTEGER, FOREIGN KEY(groupTask_id) REFERENCES groupTask(groupTask_id))";
-        database.queryData(createTable);
         Cursor dataTask = database.getData("SELECT * FROM task WHERE groupTask_id = "+groupTaskID);
         while (dataTask.moveToNext()){
             int id = dataTask.getInt(0);
@@ -103,7 +101,7 @@ public class ListTaskActivity extends AppCompatActivity {
 
     }
 
-    void dialogCreateTask() {
+    public void dialogCreateTask() {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_create_task);
         dialog.setCanceledOnTouchOutside(false);
@@ -165,9 +163,114 @@ public class ListTaskActivity extends AppCompatActivity {
                         year = 0;
                     }
 
-                    String insertGroupTask = "INSERT INTO task VALUES(NULL, '"+ name +"', '"+ describe +"', "+ day +","+ month +
+                    String insertTask = "INSERT INTO task VALUES(NULL, '"+ name +"', '"+ describe +"', "+ day +","+ month +
                     ", "+ year +", " +hour+ ", "+ minute +", "+ repeatType +", "+ intNotify +", "+ groupTaskID +")";
-                    database.queryData(insertGroupTask);
+                    database.queryData(insertTask);
+                    updateListViewGroupTask();
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        tvTimeCreateDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                timePickerDialog();
+            }
+        });
+
+        tvDateCreateDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                datePickerDialog();
+            }
+        });
+
+        tvRepeatType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogRepeatType();
+            }
+        });
+        dialog.show();
+    }
+    public void dialogEditTask(final Task task) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_create_task);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setTitle("Edit Task");
+
+        Window dialogWindow = dialog.getWindow();
+        WindowManager.LayoutParams layoutParams = dialogWindow.getAttributes();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ListTaskActivity.this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        layoutParams.height = (int) (height * 0.9);
+        layoutParams.width  = (int) (width);
+        dialogWindow.setAttributes(layoutParams);
+
+        final EditText edtName = dialog.findViewById(R.id.edt_set_reminder_name);
+        final EditText edtDescribe = dialog.findViewById(R.id.edt_set_reminder_describe);
+        tvTimeCreateDialog = dialog.findViewById(R.id.edt_set_time_reminder);
+        tvDateCreateDialog = dialog.findViewById(R.id.edt_set_date_reminder);
+        tvRepeatType = dialog.findViewById(R.id.edt_set_repeat_type_reminder);
+        final CheckBox cbNotify = dialog.findViewById(R.id.cb_notify);
+
+        edtName.setText(task.getName());
+        edtDescribe.setText(task.getDescribe());
+        tvTimeCreateDialog.setText(task.getHour()+":"+task.getMinute());
+        tvDateCreateDialog.setText(task.getDay()+"/"+task.getMonth()+"/"+task.getYear());
+        cbNotify.setChecked(task.isNotification());
+
+        Button btnDone = dialog.findViewById(R.id.btn_done_create_reminder);
+        Button btnCancel = dialog.findViewById(R.id.btn_cancel_create_reminder);
+
+        btnDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name = edtName.getText().toString().trim();
+                String describe = edtDescribe.getText().toString().trim();
+                String time = tvTimeCreateDialog.getText().toString().trim();
+                String date = tvDateCreateDialog.getText().toString().trim();
+                boolean notify = cbNotify.isChecked();
+                if (name.length() <= 0){
+                    Toast.makeText(ListTaskActivity.this, "Empty name!", Toast.LENGTH_SHORT).show();
+                }else{
+                    int hour;
+                    int minute;
+                    int day;
+                    int month;
+                    int year;
+                    int intNotify = (notify == true)? 1:0;
+                    if (!time.equals("Enter time")){
+                        String arr[] = time.split(":");
+                        hour = Integer.parseInt(arr[0]);
+                        minute = Integer.parseInt(arr[1]);
+                    }else{
+                        hour = 0;
+                        minute = 0;
+                    }
+                    if (!date.equals("Enter date")){
+                        String arr[] = date.split("/");
+                        day = Integer.parseInt(arr[0]);
+                        month = Integer.parseInt(arr[1]);
+                        year = Integer.parseInt(arr[2]);
+                    }else{
+                        day = 0;
+                        month = 0;
+                        year = 0;
+                    }
+                    String updateTask = "UPDATE task SET task_name = '"+ name +"', task_describe = '"+ describe +"', task_day = "+ day +", task_month = "+month+", task_year = "+year+"," +
+                            "task_hour = "+ hour+", task_minute = "+minute+", task_repeat = "+repeatType+", task_notify = "+intNotify+" WHERE task_id = "+task.getId();
+                    database.queryData(updateTask);
                     updateListViewGroupTask();
                     dialog.dismiss();
                 }
@@ -204,7 +307,7 @@ public class ListTaskActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    void updateListViewGroupTask() {
+    public void updateListViewGroupTask() {
         arrTask = new ArrayList<>();
         Cursor dataTask = database.getData("SELECT * FROM task WHERE groupTask_id = " + groupTaskID);
         while (dataTask.moveToNext()) {
@@ -275,4 +378,33 @@ public class ListTaskActivity extends AppCompatActivity {
         });
         dialog.show();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateListViewGroupTask();
+    }
+
+    public void showPopupMenu(Context context, View view, final int i){
+        PopupMenu popupMenu = new PopupMenu(context, view);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_group_task, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.menu_delete_group:
+                        String sql = "DELETE FROM task WHERE task_id ="+ arrTask.get(i).getId();
+                        database.queryData(sql);
+                        updateListViewGroupTask();
+                        return true;
+                    case R.id.menu_edit_group:
+                        dialogEditTask(arrTask.get(i));
+                        return true;
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
 }
+

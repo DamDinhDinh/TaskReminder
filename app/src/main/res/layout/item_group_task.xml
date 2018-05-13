@@ -10,22 +10,29 @@
         android:background="@drawable/icons8_tasklist_48"
         android:id="@+id/img_icon_group_task"/>
     <TextView
-        android:padding="5dp"
+        android:layout_marginLeft="2dp"
         android:layout_toRightOf="@+id/img_icon_group_task"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:text="Group task name"
         android:textSize="20sp"
-        android:gravity="center_vertical"
+        android:gravity="center"
         android:id="@+id/tv_group_task_name"
         android:textColor="@color/colorPrimary"/>
     <TextView
+        android:layout_toLeftOf="@+id/img_vertical_menu"
         android:padding="5dp"
-        android:layout_alignParentRight="true"
-        android:layout_width="50dp"
+        android:layout_width="48dp"
         android:layout_height="match_parent"
         android:id="@+id/tv_group_task_size"
         android:text="0"
         android:textSize="20sp"
         android:gravity="center"/>
+    <ImageView
+        android:layout_marginLeft="2dp"
+        android:id="@+id/img_vertical_menu"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/icons8_menu_vertical_48"
+        android:layout_alignParentRight="true"/>
 </RelativeLayout>

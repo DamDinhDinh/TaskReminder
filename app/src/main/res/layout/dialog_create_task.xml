@@ -120,19 +120,18 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="left">
+        <CheckBox
+            android:id="@+id/cb_notify"
+            android:gravity="center"
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
         <TextView
             android:gravity="center"
             android:id="@+id/tv_notify"
             android:layout_marginLeft="2dp"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Notify"/>
-        <CheckBox
-            android:id="@+id/cb_notify"
-            android:layout_marginLeft="10dp"
-            android:gravity="center"
-            android:layout_width="48dp"
-            android:layout_height="48dp" />
+            android:text="Set notify reminder"/>
 
     </LinearLayout>
     <LinearLayout
