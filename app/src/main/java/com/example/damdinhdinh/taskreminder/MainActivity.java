@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         lvGroupTask = findViewById(R.id.lv_group_task);
 
         arrGroupTask = new ArrayList<>();
+
         database = new DatabaseSQLite(MainActivity.this, "task.sqlite", null, 1);
         String createTableGroupTask = "CREATE TABLE IF NOT EXISTS groupTask(groupTask_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "groupTask_name VARCHAR(200), groupTask_iconIndex INTEGER)";
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         database.queryData(createTableTask);
 
         updateListViewGroupTask();
-        setTaskReminderAlarmManager();
+
 
         tvNewGroupTask.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
             }
             arrGroupTask.add(groupTask);
         }
+        setTaskReminderAlarmManager();
         groupTaskAdapter = new GroupTaskAdapter(this, R.layout.item_group_task, arrGroupTask);
         lvGroupTask.setAdapter(groupTaskAdapter);
     }
@@ -243,41 +245,39 @@ public class MainActivity extends AppCompatActivity {
                 Task task = arrGroupTask.get(i).getArrTask().get(j);
                 if (task.isNotification()){
                     setNotification(task);
-
                 }
             }
         }
-        Intent notifyIntent = new Intent(this, ReminderReceiver.class);
-//        notifyIntent.putExtra("task", arrGroupTask.get(0).getArrTask().get(0));
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60, pendingIntent);
-        startService(notifyIntent);
     }
 
     void setNotification(Task task){
         Intent notifyIntent = new Intent(this, ReminderReceiver.class);
-        notifyIntent.putExtra("task", task);
+        int id = task.getId();
+        String name = task.getName();
+        String describe = task.getDescribe();
+        String date = task.getDateYearMonth();
+        String time = task.getTime24Hour();
+
+        notifyIntent.putExtra("task_id", id);
+        notifyIntent.putExtra("task_name", name);
+        notifyIntent.putExtra("task_describe", describe);
+        notifyIntent.putExtra("task_date", date);
+        notifyIntent.putExtra("task_time", time);
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
         if (task.getRepeat() == 0){
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calculateTimeNotify(task), pendingIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), pendingIntent);
             startService(notifyIntent);
         }else{
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calculateTimeNotify(task), calculateTimeRepeat(task), pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), calculateTimeRepeat(task), pendingIntent);
             startService(notifyIntent);
         }
     }
 
-    long calculateTimeNotify(Task task){
+    long getTimeInMillis(Task task){
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, task.getHour());
-        calendar.set(Calendar.MINUTE, task.getMinute());
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(Calendar.DAY_OF_MONTH, task.getDay());
-        calendar.set(Calendar.MONTH, task.getMonth());
-        calendar.set(Calendar.YEAR, task.getYear());
+        calendar.set(task.getYear(), task.getMonth() - 1, task.getDay(), task.getHour(), task.getMinute(), 0);
         return  calendar.getTimeInMillis();
     }
     long calculateTimeRepeat(Task task){

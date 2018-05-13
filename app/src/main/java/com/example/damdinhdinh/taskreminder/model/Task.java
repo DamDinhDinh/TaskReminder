@@ -49,6 +49,12 @@ public class Task implements Serializable {
         arrRepeat.add("Every year");
     }
 
+
+    public Task(){
+        id = -1;
+        name = "";
+        describe ="";
+    }
     public String getName() {
         return name;
     }
@@ -137,7 +143,7 @@ public class Task implements Serializable {
         return String.valueOf(hour +":"+ minute);
     }
 
-    public String getDate(){
+    public String getDateYearMonth(){
         return String.valueOf(day +"/"+ month +"/"+ year);
     }
 

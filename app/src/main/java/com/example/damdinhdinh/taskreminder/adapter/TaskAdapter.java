@@ -80,7 +80,7 @@ public class TaskAdapter extends BaseAdapter {
         holder.tvName.setText(arrTask.get(i).getName());
         holder.cbIsDone.setChecked(arrTask.get(i).isNotification());
         holder.tvTime.setText(arrTask.get(i).getTime24Hour());
-        holder.tvDate.setText(arrTask.get(i).getDate());
+        holder.tvDate.setText(arrTask.get(i).getDateYearMonth());
         holder.tvRepeatType.setText(arrTask.get(i).getRepeatType());
 
         return view;
