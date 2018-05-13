@@ -3,6 +3,7 @@ package com.example.damdinhdinh.taskreminder;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -51,6 +52,7 @@ public class ListTaskActivity extends AppCompatActivity {
     private TextView tvRepeatType;
     private ArrayList<String> arrRepeat;
     private int repeatType = 0;
+    private AlarmManager alarmManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -326,6 +328,7 @@ public class ListTaskActivity extends AppCompatActivity {
             Task task = new Task(id, name, describe, day, month, year, hour, minute, repeat, notify);
             arrTask.add(task);
         }
+        setTaskReminderAlarmManager();
         taskAdapter = new TaskAdapter(this, R.layout.item_task, arrTask);
         lvReminder.setAdapter(taskAdapter);
     }
@@ -406,6 +409,54 @@ public class ListTaskActivity extends AppCompatActivity {
             }
         });
         popupMenu.show();
+    }
+
+    void setTaskReminderAlarmManager(){
+        for (int i =0; i < arrTask.size(); i++){
+                Task task = arrTask.get(i);
+                if (task.isNotification()){
+                    setNotification(task);
+                }
+            }
+    }
+
+    void setNotification(Task task){
+        Intent notifyIntent = new Intent(this, ReminderReceiver.class);
+        int id = task.getId();
+        String name = task.getName();
+        String describe = task.getDescribe();
+        String date = task.getDateYearMonth();
+        String time = task.getTime24Hour();
+
+        notifyIntent.putExtra("task_id", id);
+        notifyIntent.putExtra("task_name", name);
+        notifyIntent.putExtra("task_describe", describe);
+        notifyIntent.putExtra("task_date", date);
+        notifyIntent.putExtra("task_time", time);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
+        if (task.getRepeat() == 0){
+            alarmManager.set(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), pendingIntent);
+            startService(notifyIntent);
+        }else{
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), calculateTimeRepeat(task), pendingIntent);
+            startService(notifyIntent);
+        }
+    }
+
+    long getTimeInMillis(Task task){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(task.getYear(), task.getMonth() - 1, task.getDay(), task.getHour(), task.getMinute(), 0);
+        return  calendar.getTimeInMillis();
+    }
+    long calculateTimeRepeat(Task task){
+        final long TIME_OF_DAY = 24*60*60*1000;
+        switch (task.getRepeat()){
+            case 1: return TIME_OF_DAY;
+            case 2: return TIME_OF_DAY * 7;
+            default: return 0;
+        }
     }
 }
 
