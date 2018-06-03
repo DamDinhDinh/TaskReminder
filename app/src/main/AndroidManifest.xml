@@ -23,11 +23,13 @@
         <receiver
             android:name=".ReminderReceiver"
             android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.damdinhdinh.taskreminder.REMINDER"></action>
+            </intent-filter>
 
         </receiver>
         <service android:name=".ReminderService"
             android:exported="false">
-
         </service>
     </application>
 

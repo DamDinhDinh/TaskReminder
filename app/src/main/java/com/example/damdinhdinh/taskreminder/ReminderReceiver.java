@@ -17,13 +17,14 @@ public class ReminderReceiver extends BroadcastReceiver {
         String describe = intent.getExtras().getString("task_describe");
         String date = intent.getExtras().getString("task_date");
         String time = intent.getExtras().getString("task_time");
-
+        int repeat = intent.getExtras().getInt("task_repeat");
         Intent notifyIntent = new Intent(context, ReminderService.class);
         notifyIntent.putExtra("task_id", id);
         notifyIntent.putExtra("task_name", name);
         notifyIntent.putExtra("task_describe", describe);
         notifyIntent.putExtra("task_date", date);
         notifyIntent.putExtra("task_time", time);
+        notifyIntent.putExtra("task_repeat", repeat);
         context.startService(notifyIntent);
     }
 }

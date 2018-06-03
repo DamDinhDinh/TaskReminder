@@ -12,22 +12,26 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.example.damdinhdinh.taskreminder.database.DatabaseSQLite;
 import com.example.damdinhdinh.taskreminder.model.Task;
 
 public class ReminderService extends IntentService {
     private Task task;
     private  Intent intent;
+    private DatabaseSQLite database;
     public ReminderService(){
         super("ReminderService");
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        database = new DatabaseSQLite(this, "task.sqlite", null, 1);
         int id = intent.getExtras().getInt("task_id");
         String name = intent.getExtras().getString("task_name");
         String describe = intent.getExtras().getString("task_describe");
         String date = intent.getExtras().getString("task_date");
         String time = intent.getExtras().getString("task_time");
+        int repeat = intent.getExtras().getInt("task_repeat");
 //        Notification.Builder builder = new Notification.Builder(this);
 //        builder.setContentTitle(name);
 //        builder.setContentText(describe);
@@ -57,6 +61,9 @@ public class ReminderService extends IntentService {
         Notification notification = builder.build();
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
         managerCompat.notify(id, notification);
-
+        if (repeat == 0){
+            String sql = "UPDATE task SET task_notify = 0 WHERE task_id = "+id;
+            database.queryData(sql);
+        }
     }
 }

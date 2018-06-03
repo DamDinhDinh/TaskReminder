@@ -31,9 +31,9 @@ public class Task implements Serializable {
         arrRepeat.add("Does not repeat");
         arrRepeat.add("Every day");
         arrRepeat.add("Every week");
-        arrRepeat.add("Week day");
-        arrRepeat.add("Every month");
-        arrRepeat.add("Every year");
+//        arrRepeat.add("Week day");
+//        arrRepeat.add("Every month");
+//        arrRepeat.add("Every year");
     }
 
     public Task(String name, String describe, boolean notification) {
@@ -44,9 +44,9 @@ public class Task implements Serializable {
         arrRepeat.add("Does not repeat");
         arrRepeat.add("Every day");
         arrRepeat.add("Every week");
-        arrRepeat.add("Week day");
-        arrRepeat.add("Every month");
-        arrRepeat.add("Every year");
+//        arrRepeat.add("Week day");
+//        arrRepeat.add("Every month");
+//        arrRepeat.add("Every year");
     }
 
 
@@ -140,6 +140,9 @@ public class Task implements Serializable {
     }
 
     public String getTime24Hour(){
+        if (minute == 0){
+            return String.valueOf(hour +":"+ minute+"0");
+        }
         return String.valueOf(hour +":"+ minute);
     }
 

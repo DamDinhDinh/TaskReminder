@@ -427,13 +427,13 @@ public class ListTaskActivity extends AppCompatActivity {
         String describe = task.getDescribe();
         String date = task.getDateYearMonth();
         String time = task.getTime24Hour();
-
+        int repeatType = task.getRepeat();
         notifyIntent.putExtra("task_id", id);
         notifyIntent.putExtra("task_name", name);
         notifyIntent.putExtra("task_describe", describe);
         notifyIntent.putExtra("task_date", date);
         notifyIntent.putExtra("task_time", time);
-
+        notifyIntent.putExtra("task_repeat", repeatType);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
         if (task.getRepeat() == 0){

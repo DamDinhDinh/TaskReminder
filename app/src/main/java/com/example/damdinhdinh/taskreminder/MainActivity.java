@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
             }
             arrGroupTask.add(groupTask);
         }
-        setTaskReminderAlarmManager();
+        //setTaskReminderAlarmManager();
         groupTaskAdapter = new GroupTaskAdapter(this, R.layout.item_group_task, arrGroupTask);
         lvGroupTask.setAdapter(groupTaskAdapter);
     }
