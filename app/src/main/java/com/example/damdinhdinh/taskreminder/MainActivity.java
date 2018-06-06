@@ -84,25 +84,25 @@ public class MainActivity extends AppCompatActivity {
         lvGroupTask.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
-                    PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
-                    popupMenu.getMenuInflater().inflate(R.menu.menu_group_task, popupMenu.getMenu());
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem menuItem) {
-                            switch (menuItem.getItemId()){
-                                case R.id.menu_delete_group:
-                                    String sql = "DELETE FROM groupTask WHERE groupTask_id ="+ arrGroupTask.get(i).getId();
-                                    database.queryData(sql);
-                                    updateListViewGroupTask();
-                                    return true;
-                                case R.id.menu_edit_group:
-                                    dialogEditGroupTask(arrGroupTask.get(i));
-                                    return true;
-                            }
-                            return false;
+                PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_group_task, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()){
+                            case R.id.menu_delete_group:
+                                String sql = "DELETE FROM groupTask WHERE groupTask_id ="+ arrGroupTask.get(i).getId();
+                                database.queryData(sql);
+                                updateListViewGroupTask();
+                                return true;
+                            case R.id.menu_edit_group:
+                                dialogEditGroupTask(arrGroupTask.get(i));
+                                return true;
                         }
-                    });
-                    popupMenu.show();
+                        return false;
+                    }
+                });
+                popupMenu.show();
                 return true;
             }
         });
@@ -110,53 +110,53 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void dialogCreateGroupTask() {
-         final Dialog dialog = new Dialog(this);
-         dialog.setContentView(R.layout.dialog_create_group_task);
-         dialog.setCanceledOnTouchOutside(false);
-         dialog.setTitle("Create Group Task");
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_create_group_task);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setTitle("Create Group Task");
 
-         Window dialogWindow = dialog.getWindow();
-         WindowManager.LayoutParams layoutParams = dialogWindow.getAttributes();
-         DisplayMetrics displayMetrics = new DisplayMetrics();
-         MainActivity.this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-         int height = displayMetrics.heightPixels;
-         int width = displayMetrics.widthPixels;
-         layoutParams.height = (int) (height * 0.6);
-         layoutParams.width  = (int) (width * 0.9);
-         dialogWindow.setAttributes(layoutParams);
+        Window dialogWindow = dialog.getWindow();
+        WindowManager.LayoutParams layoutParams = dialogWindow.getAttributes();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        MainActivity.this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        layoutParams.height = (int) (height * 0.6);
+        layoutParams.width  = (int) (width * 0.9);
+        dialogWindow.setAttributes(layoutParams);
 
-         final EditText edtGroupName = dialog.findViewById(R.id.edt_group_name);
-         final ImageView imgGroupIcon = dialog.findViewById(R.id.img_group_icon);
+        final EditText edtGroupName = dialog.findViewById(R.id.edt_group_name);
+        final ImageView imgGroupIcon = dialog.findViewById(R.id.img_group_icon);
 
-         imgGroupIcon.setTag(R.drawable.icons8_tasklist_48);
+        imgGroupIcon.setTag(R.drawable.icons8_tasklist_48);
 
-         Button btnDone = dialog.findViewById(R.id.btn_done);
-         Button btnCancel = dialog.findViewById(R.id.btn_cancel);
+        Button btnDone = dialog.findViewById(R.id.btn_done);
+        Button btnCancel = dialog.findViewById(R.id.btn_cancel);
 
-         btnDone.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
-                 String groupName = edtGroupName.getText().toString().trim();
-                 int groupIconIndex = (int) imgGroupIcon.getTag();
-                 if (groupName.length() <= 0){
-                     Toast.makeText(MainActivity.this, "Empty name!", Toast.LENGTH_SHORT).show();
-                 }else{
-                     String insertGroupTask = "INSERT INTO groupTask VALUES(NULL, '"+ groupName +"',"+ groupIconIndex +")";
-                     database.queryData(insertGroupTask);
-                     updateListViewGroupTask();
-                     dialog.dismiss();
-                 }
-             }
-         });
+        btnDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String groupName = edtGroupName.getText().toString().trim();
+                int groupIconIndex = (int) imgGroupIcon.getTag();
+                if (groupName.length() <= 0){
+                    Toast.makeText(MainActivity.this, "Empty name!", Toast.LENGTH_SHORT).show();
+                }else{
+                    String insertGroupTask = "INSERT INTO groupTask VALUES(NULL, '"+ groupName +"',"+ groupIconIndex +")";
+                    database.queryData(insertGroupTask);
+                    updateListViewGroupTask();
+                    dialog.dismiss();
+                }
+            }
+        });
 
-         btnCancel.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
-                 dialog.cancel();
-             }
-         });
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
 
-         dialog.show();
+        dialog.show();
     }
     void dialogEditGroupTask(final GroupTask groupTask) {
         final Dialog dialog = new Dialog(this);

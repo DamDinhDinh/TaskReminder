@@ -7,22 +7,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     >
 
     <LinearLayout
-        android:padding="1dp"
+        android:paddingLeft="1dp"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <TextView
             android:id="@+id/tv_group_name"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Input group name"
-            android:textSize="25sp"
-            android:gravity="center"/>
+            android:layout_height="wrap_content"
+            android:text="List name"
+            android:textSize="20sp"
+            android:textColor="@color/colorText"
+            />
     </LinearLayout>
     <LinearLayout
         android:layout_marginTop="10dp"
@@ -31,42 +31,42 @@
         android:layout_height="50dp"
         >
         <EditText
-            android:gravity="center"
+            android:gravity="top"
             android:id="@+id/edt_group_name"
             android:layout_marginLeft="2dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="name"/>
+            android:hint="Enter list name...."/>
     </LinearLayout>
-    <LinearLayout
-        android:layout_marginTop="10dp"
-        android:padding="1dp"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:gravity="center">
-        <TextView
-            android:id="@+id/tv_group_icon"
-            android:layout_marginLeft="2dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Choose group icon"
-            android:textSize="25sp"
-            android:gravity="center"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_marginTop="10dp"
-        android:padding="1dp"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="center">
-        <ImageView
-            android:id="@+id/img_group_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/icons8_to_do_48" />
+    <!--<LinearLayout-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:padding="1dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:gravity="center">-->
+        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/tv_group_icon"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_marginLeft="2dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="Choose group icon"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textSize="25sp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:gravity="center"/>&ndash;&gt;-->
+    <!--</LinearLayout>-->
+    <!--<LinearLayout-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:padding="1dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:gravity="center">-->
+        <!--<ImageView-->
+            <!--android:id="@+id/img_group_icon"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@drawable/icons8_to_do_48" />-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
     <LinearLayout
         android:layout_marginTop="10dp"
         android:padding="1dp"
@@ -74,18 +74,18 @@
         android:layout_height="50dp"
         android:orientation="horizontal"
         android:gravity="center">
+
         <Button
-            android:layout_marginRight="20dp"
+            android:id="@+id/btn_cancel"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:text="CANCEL"
+            />
+        <Button
             android:id="@+id/btn_done"
             android:layout_width="150dp"
             android:layout_height="match_parent"
             android:text="DONE"
-            />
-        <Button
-            android:id="@+id/btn_cancel"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:text="CANCEL"
             />
     </LinearLayout>
 </LinearLayout>
