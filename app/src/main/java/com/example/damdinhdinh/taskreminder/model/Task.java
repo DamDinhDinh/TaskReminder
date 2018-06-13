@@ -153,4 +153,8 @@ public class Task implements Serializable {
     public String getRepeatType(){
         return arrRepeat.get(repeat);
     }
+
+    public ArrayList<String> getArrRepeat() {
+        return arrRepeat;
+    }
 }

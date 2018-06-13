@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp">
         <TextView
+            android:textColor="@color/colorBlack"
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -29,9 +30,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <CheckBox
+                android:buttonTint="@color/colorPrimary"
+                android:backgroundTint="@color/colorPrimaryDark"
                 android:layout_alignParentLeft="true"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:id="@+id/cb_reminder_is_done"
                 />
 
@@ -68,10 +71,12 @@
                 android:id="@+id/tv_reminder_repeat_type"
                 />
             <ImageView
+                android:layout_margin="5dp"
+                android:backgroundTint="@color/colorPrimaryDark"
                 android:layout_alignParentRight="true"
                 android:layout_marginLeft="5dp"
                 android:background="@drawable/icons8_menu_vertical_48"
-                android:layout_width="wrap_content"
+                android:layout_width="40dp"
                 android:layout_height="48dp"
                 android:id="@+id/img_menu_item_task"/>
         </RelativeLayout>

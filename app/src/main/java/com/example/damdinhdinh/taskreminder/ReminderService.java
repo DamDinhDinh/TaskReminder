@@ -45,8 +45,6 @@ public class ReminderService extends IntentService {
 
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_custom);
         remoteViews.setTextViewText(R.id.tv_notification_title, name);
-        remoteViews.setTextViewText(R.id.tv_notification_describe, describe);
-        remoteViews.setTextViewText(R.id.tv_notification_date, date);
         remoteViews.setTextViewText(R.id.tv_notification_time, time);
         Notification.Builder builder = new Notification.Builder(this);
         builder.setContentTitle(name);

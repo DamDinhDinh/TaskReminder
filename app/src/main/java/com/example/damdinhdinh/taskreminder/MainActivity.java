@@ -3,15 +3,12 @@ package com.example.damdinhdinh.taskreminder;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -30,10 +27,8 @@ import com.example.damdinhdinh.taskreminder.database.DatabaseSQLite;
 import com.example.damdinhdinh.taskreminder.model.GroupTask;
 import com.example.damdinhdinh.taskreminder.model.Task;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private ImageView imgNewGroupTask;
@@ -121,15 +116,11 @@ public class MainActivity extends AppCompatActivity {
          MainActivity.this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
          int height = displayMetrics.heightPixels;
          int width = displayMetrics.widthPixels;
-         layoutParams.height = (int) (height * 0.6);
-         layoutParams.width  = (int) (width * 0.9);
+//         layoutParams.height = (int) (height * 0.6);
+//         layoutParams.width  = (int) (width * 0.9);
          dialogWindow.setAttributes(layoutParams);
 
          final EditText edtGroupName = dialog.findViewById(R.id.edt_group_name);
-         final ImageView imgGroupIcon = dialog.findViewById(R.id.img_group_icon);
-
-         imgGroupIcon.setTag(R.drawable.icons8_tasklist_48);
-
          Button btnDone = dialog.findViewById(R.id.btn_done);
          Button btnCancel = dialog.findViewById(R.id.btn_cancel);
 
@@ -137,11 +128,10 @@ public class MainActivity extends AppCompatActivity {
              @Override
              public void onClick(View view) {
                  String groupName = edtGroupName.getText().toString().trim();
-                 int groupIconIndex = (int) imgGroupIcon.getTag();
                  if (groupName.length() <= 0){
                      Toast.makeText(MainActivity.this, "Empty name!", Toast.LENGTH_SHORT).show();
                  }else{
-                     String insertGroupTask = "INSERT INTO groupTask VALUES(NULL, '"+ groupName +"',"+ groupIconIndex +")";
+                     String insertGroupTask = "INSERT INTO groupTask VALUES(NULL, '"+ groupName +"',"+ 0 +")";
                      database.queryData(insertGroupTask);
                      updateListViewGroupTask();
                      dialog.dismiss();
@@ -170,15 +160,13 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        layoutParams.height = (int) (height * 0.6);
-        layoutParams.width  = (int) (width * 0.9);
+//        layoutParams.height = (int) (height * 0.6);
+//        layoutParams.width  = (int) (width * 0.9);
         dialogWindow.setAttributes(layoutParams);
 
         final EditText edtGroupName = dialog.findViewById(R.id.edt_group_name);
-        final ImageView imgGroupIcon = dialog.findViewById(R.id.img_group_icon);
         edtGroupName.setText(groupTask.getName());
 
-        imgGroupIcon.setTag(R.drawable.icons8_tasklist_48);
 
         Button btnDone = dialog.findViewById(R.id.btn_done);
         Button btnCancel = dialog.findViewById(R.id.btn_cancel);
@@ -187,11 +175,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String groupName = edtGroupName.getText().toString().trim();
-                int groupIconIndex = (int) imgGroupIcon.getTag();
                 if (groupName.length() <= 0){
                     Toast.makeText(MainActivity.this, "Empty name!", Toast.LENGTH_SHORT).show();
                 }else{
-                    String insertGroupTask = "UPDATE groupTask SET groupTask_name = '"+groupName+ "', groupTask_iconIndex = "+groupIconIndex+" WHERE groupTask_id ="+groupTask.getId();
+                    String insertGroupTask = "UPDATE groupTask SET groupTask_name = '"+groupName+ "', groupTask_iconIndex = "+0+" WHERE groupTask_id ="+groupTask.getId();
                     database.queryData(insertGroupTask);
                     updateListViewGroupTask();
                     dialog.dismiss();

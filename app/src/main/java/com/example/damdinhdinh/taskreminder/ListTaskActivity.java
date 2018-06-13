@@ -89,9 +89,9 @@ public class ListTaskActivity extends AppCompatActivity {
         arrRepeat.add("Does not repeat");
         arrRepeat.add("Every day");
         arrRepeat.add("Every week");
-        arrRepeat.add("Week day");
-        arrRepeat.add("Every month");
-        arrRepeat.add("Every year");
+//        arrRepeat.add("Week day");
+//        arrRepeat.add("Every month");
+//        arrRepeat.add("Every year");
 
         tvNewReminder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,8 +116,8 @@ public class ListTaskActivity extends AppCompatActivity {
         ListTaskActivity.this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        layoutParams.height = (int) (height * 0.9);
-        layoutParams.width  = (int) (width);
+//        layoutParams.height = (int) (height * 0.9);
+//        layoutParams.width  = (int) (width * 0.9);
         dialogWindow.setAttributes(layoutParams);
 
         final EditText edtName = dialog.findViewById(R.id.edt_set_reminder_name);
@@ -216,8 +216,8 @@ public class ListTaskActivity extends AppCompatActivity {
         ListTaskActivity.this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        layoutParams.height = (int) (height * 0.9);
-        layoutParams.width  = (int) (width);
+//        layoutParams.height = (int) (height * 0.9);
+//        layoutParams.width  = (int) (width);
         dialogWindow.setAttributes(layoutParams);
 
         final EditText edtName = dialog.findViewById(R.id.edt_set_reminder_name);

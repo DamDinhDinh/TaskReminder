@@ -17,11 +17,14 @@
         android:layout_height="50dp"
         >
         <ImageView
+            android:backgroundTint="@color/colorPrimaryDark"
             android:id="@+id/img_icon_set_name_reminder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/icons8_tag_window_48"/>
         <EditText
+            android:backgroundTint="@color/colorPrimaryDark"
             android:gravity="center"
             android:id="@+id/edt_set_reminder_name"
             android:layout_marginLeft="2dp"
@@ -37,12 +40,15 @@
         android:layout_height="50dp"
         >
         <ImageView
+            android:backgroundTint="@color/colorPrimaryDark"
             android:id="@+id/img_icon_set_describe_reminder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/icons8_edit_48"/>
 
         <EditText
+            android:backgroundTint="@color/colorPrimaryDark"
             android:gravity="center"
             android:id="@+id/edt_set_reminder_describe"
             android:layout_marginLeft="2dp"
@@ -59,9 +65,11 @@
         android:padding="1dp">
 
         <ImageView
+            android:backgroundTint="@color/colorPrimaryDark"
             android:id="@+id/img_icon_set_time_reminder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/icons8_time_48" />
 
         <TextView
@@ -80,9 +88,11 @@
         android:layout_height="50dp"
         android:gravity="center">
         <ImageView
+            android:backgroundTint="@color/colorPrimaryDark"
             android:id="@+id/img_set_date_reminder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/icons8_calendar_48"/>
         <TextView
             android:gravity="center"
@@ -100,9 +110,11 @@
         android:layout_height="50dp"
         android:gravity="center">
         <ImageView
+            android:backgroundTint="@color/colorPrimaryDark"
             android:id="@+id/img_set_repeat_type_reminder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/icons8_restart_48"/>
         <TextView
             android:gravity="center"
@@ -121,11 +133,14 @@
         android:layout_height="50dp"
         android:gravity="left">
         <CheckBox
+            android:layout_margin="5dp"
+            android:buttonTint="@color/colorPrimary"
             android:id="@+id/cb_notify"
-            android:gravity="center"
-            android:layout_width="48dp"
-            android:layout_height="48dp" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:paddingTop="10dp"/>
         <TextView
+            android:backgroundTint="@color/colorPrimaryDark"
             android:gravity="center"
             android:id="@+id/tv_notify"
             android:layout_marginLeft="2dp"
@@ -142,6 +157,8 @@
         android:orientation="horizontal"
         android:gravity="center">
         <Button
+            android:textColor="@color/colorPrimary"
+            android:background="@null"
             android:layout_marginRight="20dp"
             android:id="@+id/btn_done_create_reminder"
             android:layout_width="150dp"
@@ -149,6 +166,8 @@
             android:text="DONE"
             />
         <Button
+            android:textColor="@color/colorBlack"
+            android:background="@null"
             android:id="@+id/btn_cancel_create_reminder"
             android:layout_width="100dp"
             android:layout_height="match_parent"
