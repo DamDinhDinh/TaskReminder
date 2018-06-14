@@ -80,8 +80,9 @@ public class ListTaskActivity extends AppCompatActivity {
             int minute = dataTask.getInt(7);
             int repeat = dataTask.getInt(8);
             boolean notify = (dataTask.getInt(9) == 1);
+            int groupTaskId = dataTask.getInt(10);
             boolean isSet = (dataTask.getInt(11) == 1);
-            Task task = new Task(id, name, describe, day, month, year, hour, minute, repeat, notify, isSet);
+            Task task = new Task(id, name, describe, day, month, year, hour, minute, repeat, notify, isSet, groupTaskId);
             Log.d("AAAAA",task.getName()+" "+task.getId()+" "+task.isSet());
             arrTask.add(task);
         }
@@ -326,8 +327,9 @@ public class ListTaskActivity extends AppCompatActivity {
             int minute = dataTask.getInt(7);
             int repeat = dataTask.getInt(8);
             boolean notify = (dataTask.getInt(9) == 1);
+            int groupTaskId = dataTask.getInt(10);
             boolean isSet = (dataTask.getInt(11) == 1);
-            Task task = new Task(id, name, describe, day, month, year, hour, minute, repeat, notify, isSet);
+            Task task = new Task(id, name, describe, day, month, year, hour, minute, repeat, notify, isSet, groupTaskId);
             Log.d("AAAAA",task.isNotification()+" "+!task.isSet()+" "+isSet+dataTask.getInt(10)+dataTask.getInt(10));
             arrTask.add(task);
         }
@@ -441,6 +443,7 @@ public class ListTaskActivity extends AppCompatActivity {
         notifyIntent.putExtra("task_date", date);
         notifyIntent.putExtra("task_time", time);
         notifyIntent.putExtra("task_repeat", repeatType);
+        notifyIntent.putExtra("group_task_id", task.getGroupTaskId());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
         if (task.getRepeat() == 0){

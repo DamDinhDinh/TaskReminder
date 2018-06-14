@@ -67,8 +67,6 @@ public class TaskAdapter extends BaseAdapter {
             holder.tvDate = view.findViewById(R.id.tv_reminder_date);
             holder.tvRepeatType = view.findViewById(R.id.tv_reminder_repeat_type);
             holder.imgMenuTask = view.findViewById(R.id.img_menu_item_task);
-
-
             view.setTag(holder);
         }else{
             holder = (ViewHolder) view.getTag();

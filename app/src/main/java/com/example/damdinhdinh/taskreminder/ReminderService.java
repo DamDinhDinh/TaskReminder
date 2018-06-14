@@ -32,6 +32,7 @@ public class ReminderService extends IntentService {
         String date = intent.getExtras().getString("task_date");
         String time = intent.getExtras().getString("task_time");
         int repeat = intent.getExtras().getInt("task_repeat");
+        int groupTaskId = intent.getExtras().getInt("group_task_id");
 //        Notification.Builder builder = new Notification.Builder(this);
 //        builder.setContentTitle(name);
 //        builder.setContentText(describe);
@@ -54,6 +55,7 @@ public class ReminderService extends IntentService {
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         builder.setSound(alarmSound);
         Intent notifyIntent = new Intent(this, ListTaskActivity.class);
+        notifyIntent.putExtra("groupTask_id", groupTaskId);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
         Notification notification = builder.build();
