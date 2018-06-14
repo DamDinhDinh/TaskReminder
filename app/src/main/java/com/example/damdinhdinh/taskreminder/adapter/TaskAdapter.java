@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.damdinhdinh.taskreminder.ListTaskActivity;
 import com.example.damdinhdinh.taskreminder.MainActivity;
@@ -36,12 +37,12 @@ public class TaskAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        return null;
+        return arrTask.get(i);
     }
 
     @Override
     public long getItemId(int i) {
-        return 0;
+        return i;
     }
 
     private class ViewHolder{
@@ -66,17 +67,19 @@ public class TaskAdapter extends BaseAdapter {
             holder.tvDate = view.findViewById(R.id.tv_reminder_date);
             holder.tvRepeatType = view.findViewById(R.id.tv_reminder_repeat_type);
             holder.imgMenuTask = view.findViewById(R.id.img_menu_item_task);
-            holder.imgMenuTask.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    context.showPopupMenu(context, view, i);
-                }
-            });
+
 
             view.setTag(holder);
         }else{
             holder = (ViewHolder) view.getTag();
         }
+        holder.imgMenuTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, "Clicked "+ arrTask.get(i).getId()+" "+ arrTask.get(i).getName(), Toast.LENGTH_SHORT).show();
+                context.showPopupMenu(context, view, i);
+            }
+        });
         holder.tvName.setText(arrTask.get(i).getName());
         holder.cbIsDone.setChecked(arrTask.get(i).isNotification());
         holder.tvTime.setText(arrTask.get(i).getTime24Hour());

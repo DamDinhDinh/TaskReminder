@@ -65,16 +65,17 @@ public class GroupTaskAdapter extends BaseAdapter{
             holder.imgGroupTaskIcon = view.findViewById(R.id.img_icon_group_task);
             holder.tvGroupTaskSize = view.findViewById(R.id.tv_group_task_size);
             holder.imgVerticalMenu = view.findViewById(R.id.img_vertical_menu);
-            holder.imgVerticalMenu.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    context.showPopupMenu(context, view, i);
-                }
-            });
+
             view.setTag(holder);
         }else{
             holder = (ViewHolder) view.getTag();
         }
+        holder.imgVerticalMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                context.showPopupMenu(context, view, i);
+            }
+        });
         GroupTask groupTask = arrGroupTask.get(i);
         holder.tvGroupTaskName.setText(groupTask.getName());
 //        holder.imgGroupTaskIcon.setImageResource(groupTask.getIcon());

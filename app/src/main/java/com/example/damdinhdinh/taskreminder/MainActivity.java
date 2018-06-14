@@ -5,10 +5,12 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -50,14 +52,30 @@ public class MainActivity extends AppCompatActivity {
         arrGroupTask = new ArrayList<>();
 
         database = new DatabaseSQLite(MainActivity.this, "task.sqlite", null, 1);
+//        String sql = "DROP TABLE groupTask";
+//        String sql1 = "DROP TABLE task";
         String createTableGroupTask = "CREATE TABLE IF NOT EXISTS groupTask(groupTask_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "groupTask_name VARCHAR(200), groupTask_iconIndex INTEGER)";
         database.queryData(createTableGroupTask);
         String createTableTask = "CREATE TABLE IF NOT EXISTS task(task_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "task_name VARCHAR(200), task_describe VARCHAR (200), task_day INTEGER(2), task_month INTEGER(2), " +
                 "task_year INTEGER, task_hour INTEGER(2), task_minute INTEGER(2), task_repeat INTEGER(1), " +
-                "task_notify INTEGER(1), groupTask_id INTEGER, FOREIGN KEY(groupTask_id) REFERENCES groupTask(groupTask_id))";
+                "task_notify INTEGER(1), groupTask_id INTEGER, task_is_set INTEGER(1), FOREIGN KEY(groupTask_id) REFERENCES groupTask(groupTask_id))";
         database.queryData(createTableTask);
+//        database.queryData(sql);
+//        database.queryData(sql1);
+
+        SharedPreferences sharedPre = getSharedPreferences("setting", 0);
+
+        if (sharedPre.getBoolean("first_time_open_app", true)) {
+            String sql = "INSERT INTO groupTask VALUES(NULL, 'Today',"+ 0 +")";
+            database.queryData(sql);
+            sql = "INSERT INTO groupTask VALUES(NULL, 'Excercise',"+ 0 +")";
+            database.queryData(sql);
+            sql = "INSERT INTO groupTask VALUES(NULL, 'Work',"+ 0 +")";
+            database.queryData(sql);
+            sharedPre.edit().putBoolean("my_first_time", false).commit();
+        }
 
         updateListViewGroupTask();
 

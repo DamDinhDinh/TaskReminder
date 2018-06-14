@@ -15,7 +15,7 @@ public class Task implements Serializable {
     private int repeat;
     private ArrayList<String> arrRepeat;
     private boolean notification;
-
+    private boolean isSet;
     public Task(int id, String name, String describe, int day, int month, int year, int hour, int minute, int repeat, boolean notification) {
         this.id = id;
         this.name = name;
@@ -34,6 +34,24 @@ public class Task implements Serializable {
 //        arrRepeat.add("Week day");
 //        arrRepeat.add("Every month");
 //        arrRepeat.add("Every year");
+    }
+
+    public Task(int id, String name, String describe, int day, int month, int year, int hour, int minute, int repeat, boolean notification, boolean isSet) {
+        this.id = id;
+        this.name = name;
+        this.describe = describe;
+        this.day = day;
+        this.month = month;
+        this.year = year;
+        this.hour = hour;
+        this.minute = minute;
+        this.repeat = repeat;
+        this.notification = notification;
+        this.isSet = isSet;
+        arrRepeat = new ArrayList<>();
+        arrRepeat.add("Does not repeat");
+        arrRepeat.add("Every day");
+        arrRepeat.add("Every week");
     }
 
     public Task(String name, String describe, boolean notification) {
@@ -140,8 +158,8 @@ public class Task implements Serializable {
     }
 
     public String getTime24Hour(){
-        if (minute == 0){
-            return String.valueOf(hour +":"+ minute+"0");
+        if (minute < 10){
+            return String.valueOf(hour +":"+ "0"+minute);
         }
         return String.valueOf(hour +":"+ minute);
     }
@@ -156,5 +174,13 @@ public class Task implements Serializable {
 
     public ArrayList<String> getArrRepeat() {
         return arrRepeat;
+    }
+
+    public boolean isSet() {
+        return isSet;
+    }
+
+    public void setSet(boolean set) {
+        isSet = set;
     }
 }

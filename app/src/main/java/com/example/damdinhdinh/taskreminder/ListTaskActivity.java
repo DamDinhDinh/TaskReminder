@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -52,7 +53,7 @@ public class ListTaskActivity extends AppCompatActivity {
     private TextView tvRepeatType;
     private ArrayList<String> arrRepeat;
     private int repeatType = 0;
-    private AlarmManager alarmManager;
+    private static AlarmManager alarmManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,8 +80,9 @@ public class ListTaskActivity extends AppCompatActivity {
             int minute = dataTask.getInt(7);
             int repeat = dataTask.getInt(8);
             boolean notify = (dataTask.getInt(9) == 1);
-
-            Task task = new Task(id, name, describe, day, month, year, hour, minute, repeat, notify);
+            boolean isSet = (dataTask.getInt(11) == 1);
+            Task task = new Task(id, name, describe, day, month, year, hour, minute, repeat, notify, isSet);
+            Log.d("AAAAA",task.getName()+" "+task.getId()+" "+task.isSet());
             arrTask.add(task);
         }
         taskAdapter = new TaskAdapter(this, R.layout.item_task, arrTask);
@@ -167,7 +169,7 @@ public class ListTaskActivity extends AppCompatActivity {
                     }
 
                     String insertTask = "INSERT INTO task VALUES(NULL, '"+ name +"', '"+ describe +"', "+ day +","+ month +
-                    ", "+ year +", " +hour+ ", "+ minute +", "+ repeatType +", "+ intNotify +", "+ groupTaskID +")";
+                    ", "+ year +", " +hour+ ", "+ minute +", "+ repeatType +", "+ intNotify +", "+ groupTaskID +", 0)";
                     database.queryData(insertTask);
                     updateListViewGroupTask();
                     dialog.dismiss();
@@ -324,8 +326,9 @@ public class ListTaskActivity extends AppCompatActivity {
             int minute = dataTask.getInt(7);
             int repeat = dataTask.getInt(8);
             boolean notify = (dataTask.getInt(9) == 1);
-
-            Task task = new Task(id, name, describe, day, month, year, hour, minute, repeat, notify);
+            boolean isSet = (dataTask.getInt(11) == 1);
+            Task task = new Task(id, name, describe, day, month, year, hour, minute, repeat, notify, isSet);
+            Log.d("AAAAA",task.isNotification()+" "+!task.isSet()+" "+isSet+dataTask.getInt(10)+dataTask.getInt(10));
             arrTask.add(task);
         }
         setTaskReminderAlarmManager();
@@ -414,8 +417,12 @@ public class ListTaskActivity extends AppCompatActivity {
     void setTaskReminderAlarmManager(){
         for (int i =0; i < arrTask.size(); i++){
                 Task task = arrTask.get(i);
-                if (task.isNotification()){
+                //Log.d("AAAAA",task.isNotification()+" "+!task.isSet());
+                if (task.isNotification() && !task.isSet()){
                     setNotification(task);
+                    String updateTask = "UPDATE task SET  task_is_set=1 WHERE task_id = "+task.getId();
+                    database.queryData(updateTask);
+                    task.setSet(true);
                 }
             }
     }
