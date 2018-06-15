@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
 import android.widget.RemoteViews;
@@ -23,6 +24,13 @@ public class ReminderService extends IntentService {
         super("ReminderService");
     }
 
+
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
+
+
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         database = new DatabaseSQLite(this, "task.sqlite", null, 1);
@@ -33,16 +41,6 @@ public class ReminderService extends IntentService {
         String time = intent.getExtras().getString("task_time");
         int repeat = intent.getExtras().getInt("task_repeat");
         int groupTaskId = intent.getExtras().getInt("group_task_id");
-//        Notification.Builder builder = new Notification.Builder(this);
-//        builder.setContentTitle(name);
-//        builder.setContentText(describe);
-//        builder.setSmallIcon(R.drawable.icons8_to_do_48);
-//        Intent notifyIntent = new Intent(this, MainActivity.class);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-//        builder.setContentIntent(pendingIntent);
-//        Notification notificationCompat = builder.build();
-//        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-//        managerCompat.notify(id, notificationCompat);
 
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_custom);
         remoteViews.setTextViewText(R.id.tv_notification_title, name);

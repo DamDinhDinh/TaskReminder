@@ -29,16 +29,13 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.damdinhdinh.taskreminder.adapter.GroupTaskAdapter;
 import com.example.damdinhdinh.taskreminder.adapter.TaskAdapter;
 import com.example.damdinhdinh.taskreminder.database.DatabaseSQLite;
-import com.example.damdinhdinh.taskreminder.model.GroupTask;
 import com.example.damdinhdinh.taskreminder.model.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class ListTaskActivity extends AppCompatActivity {
     private ImageView imgNewReminder;
@@ -371,7 +368,7 @@ public class ListTaskActivity extends AppCompatActivity {
 
     void dialogRepeatType(){
         final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dia_log_repeat_type);
+        dialog.setContentView(R.layout.dialog_repeat_type);
         dialog.setTitle("Select repeat type");
         ListView lvRepeatType = dialog.findViewById(R.id.lvRepeatType);
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrRepeat);
@@ -396,7 +393,7 @@ public class ListTaskActivity extends AppCompatActivity {
 
     public void showPopupMenu(Context context, View view, final int i){
         PopupMenu popupMenu = new PopupMenu(context, view);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_group_task, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.menu_group_task_item, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -450,8 +447,14 @@ public class ListTaskActivity extends AppCompatActivity {
             alarmManager.set(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), pendingIntent);
             startService(notifyIntent);
         }else{
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), calculateTimeRepeat(task), pendingIntent);
-            startService(notifyIntent);
+            if (task.getRepeat() == 1){
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), AlarmManager.INTERVAL_DAY, pendingIntent);
+                startService(notifyIntent);
+            }
+            if (task.getRepeat() == 2) {
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), 7 * AlarmManager.INTERVAL_DAY, pendingIntent);
+                startService(notifyIntent);
+            }
         }
     }
 
@@ -459,14 +462,6 @@ public class ListTaskActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         calendar.set(task.getYear(), task.getMonth() - 1, task.getDay(), task.getHour(), task.getMinute(), 0);
         return  calendar.getTimeInMillis();
-    }
-    long calculateTimeRepeat(Task task){
-        final long TIME_OF_DAY = 24*60*60*1000;
-        switch (task.getRepeat()){
-            case 1: return TIME_OF_DAY;
-            case 2: return TIME_OF_DAY * 7;
-            default: return 0;
-        }
     }
 }
 

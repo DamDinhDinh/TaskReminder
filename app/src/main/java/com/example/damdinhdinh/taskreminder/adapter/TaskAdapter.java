@@ -74,7 +74,6 @@ public class TaskAdapter extends BaseAdapter {
         holder.imgMenuTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Clicked "+ arrTask.get(i).getId()+" "+ arrTask.get(i).getName(), Toast.LENGTH_SHORT).show();
                 context.showPopupMenu(context, view, i);
             }
         });

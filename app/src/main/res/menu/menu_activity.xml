@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<item android:title="Sign up or Login"-->
+        <!--android:id="@+id/menu_signup_login">-->
+    <!--</item>-->
+
+    <item android:title="Import data"
+        android:id="@+id/menu_import_data">
+    </item>
+
+    <item android:title="Export data"
+        android:id="@+id/menu_export_data">
+    </item>
+</menu>
