@@ -1,35 +1,33 @@
 package com.example.damdinhdinh.taskreminder.adapter;
 
 import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.damdinhdinh.taskreminder.ListTaskActivity;
-import com.example.damdinhdinh.taskreminder.MainActivity;
+import com.example.damdinhdinh.taskreminder.ListGroupTaskActivity;
 import com.example.damdinhdinh.taskreminder.R;
+import com.example.damdinhdinh.taskreminder.ShowPopup;
 import com.example.damdinhdinh.taskreminder.database.DatabaseSQLite;
 import com.example.damdinhdinh.taskreminder.model.GroupTask;
 
 import java.util.List;
 
 public class GroupTaskAdapter extends BaseAdapter{
-    private MainActivity context;
+    private Context context;
     private int layout;
     private List<GroupTask> arrGroupTask;
     private DatabaseSQLite database;
+    private ShowPopup mListener;
 
-    public GroupTaskAdapter(MainActivity context, int layout, List<GroupTask> listGroupReminder) {
+    public GroupTaskAdapter(Context context, int layout, List<GroupTask> listGroupReminder, ShowPopup listener) {
         this.context = context;
         this.layout = layout;
         this.arrGroupTask = listGroupReminder;
+        this.mListener = listener;
         database = new DatabaseSQLite(context, "task.sqlite", null, 1);
     }
 
@@ -73,7 +71,7 @@ public class GroupTaskAdapter extends BaseAdapter{
         holder.imgVerticalMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                context.showPopupMenu(context, view, i);
+                mListener.showPopupMenu(context, view, i);
             }
         });
         GroupTask groupTask = arrGroupTask.get(i);

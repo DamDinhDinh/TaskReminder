@@ -8,25 +8,27 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.damdinhdinh.taskreminder.ListTaskActivity;
-import com.example.damdinhdinh.taskreminder.MainActivity;
 import com.example.damdinhdinh.taskreminder.R;
+import com.example.damdinhdinh.taskreminder.ShowPopup;
 import com.example.damdinhdinh.taskreminder.database.DatabaseSQLite;
 import com.example.damdinhdinh.taskreminder.model.Task;
 
 import java.util.List;
 
 public class TaskAdapter extends BaseAdapter {
-    private ListTaskActivity context;
+    private Context context;
     private int layout;
     private List<Task> arrTask;
     private DatabaseSQLite database;
-    public TaskAdapter(ListTaskActivity context, int layout, List<Task> arrTask) {
+    private ShowPopup mListener;
+
+    public TaskAdapter(Context context, int layout, List<Task> arrTask, ShowPopup listener) {
         this.context = context;
         this.layout = layout;
         this.arrTask = arrTask;
+        mListener = listener;
         database = new DatabaseSQLite(context, "task.sqlite", null, 1);
     }
 
@@ -74,7 +76,7 @@ public class TaskAdapter extends BaseAdapter {
         holder.imgMenuTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                context.showPopupMenu(context, view, i);
+                mListener.showPopupMenu(context, view, i);
             }
         });
         holder.tvName.setText(arrTask.get(i).getName());

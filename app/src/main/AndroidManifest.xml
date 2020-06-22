@@ -2,9 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.damdinhdinh.taskreminder">
 
-    <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,7 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ListTaskActivity"></activity>
+        <activity android:name=".ListGroupTaskActivity">
+        </activity>
+        <activity android:name=".ListTaskActivity" />
 
         <receiver
             android:name=".ReminderReceiver"
@@ -31,9 +34,9 @@
 
         <service
             android:name=".ReminderService"
-            android:exported="false"></service>
+            android:exported="false" />
 
-        <activity android:name=".SignupLoginActivity"></activity>
+        <activity android:name=".SignupLoginActivity" />
     </application>
 
 </manifest>

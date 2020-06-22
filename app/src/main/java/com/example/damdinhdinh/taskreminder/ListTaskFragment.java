@@ -8,12 +8,17 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -37,7 +42,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
+import static android.content.Context.ALARM_SERVICE;
+
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class ListTaskFragment extends Fragment implements ShowPopup{
+
+    private Context mContext;
+
     private ImageView imgNewReminder;
     private TextView tvNewReminder;
     private ListView lvReminder;
@@ -51,20 +65,32 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
     private ArrayList<String> arrRepeat;
     private int repeatType = 0;
     private static AlarmManager alarmManager;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_task);
 
-        imgNewReminder = findViewById(R.id.img_icon_add_new_reminder);
-        tvNewReminder = findViewById(R.id.tv_add_new_reminder);
-        lvReminder = findViewById(R.id.lv_reminder);
+    public ListTaskFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_list_task, container, false);
+
+        imgNewReminder = view.findViewById(R.id.img_icon_add_new_reminder);
+        tvNewReminder = view.findViewById(R.id.tv_add_new_reminder);
+        lvReminder = view.findViewById(R.id.lv_reminder);
 
         arrTask = new ArrayList<>();
-        Intent intent = getIntent();
-        groupTaskID = intent.getIntExtra("groupTask_id", -1);
+        Bundle bundle = getArguments();
+        groupTaskID = bundle.getInt("groupTask_id", -1);
 
-        database = new DatabaseSQLite(ListTaskActivity.this, "task.sqlite", null, 1);
+        database = new DatabaseSQLite(mContext, "task.sqlite", null, 1);
         Cursor dataTask = database.getData("SELECT * FROM task WHERE groupTask_id = "+groupTaskID);
         while (dataTask.moveToNext()){
             int id = dataTask.getInt(0);
@@ -83,7 +109,7 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
             Log.d("AAAAA",task.getName()+" "+task.getId()+" "+task.isSet());
             arrTask.add(task);
         }
-        taskAdapter = new TaskAdapter(this, R.layout.item_task, arrTask, this);
+        taskAdapter = new TaskAdapter(mContext, R.layout.item_task, arrTask, this);
         lvReminder.setAdapter(taskAdapter);
         arrRepeat = new ArrayList<>();
         arrRepeat.add("Does not repeat");
@@ -101,11 +127,85 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
         });
 
 
+        return view;
+    }
 
+    @Override
+    public void showPopupMenu(Context context, View view, final int i){
+        PopupMenu popupMenu = new PopupMenu(context, view);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_group_task_item, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.menu_delete_group:
+                        String sql = "DELETE FROM task WHERE task_id ="+ arrTask.get(i).getId();
+                        database.queryData(sql);
+                        updateListViewGroupTask();
+                        return true;
+                    case R.id.menu_edit_group:
+                        dialogEditTask(arrTask.get(i));
+                        return true;
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
+
+    void setTaskReminderAlarmManager(){
+        for (int i =0; i < arrTask.size(); i++){
+            Task task = arrTask.get(i);
+            //Log.d("AAAAA",task.isNotification()+" "+!task.isSet());
+            if (task.isNotification() && !task.isSet()){
+                setNotification(task);
+                String updateTask = "UPDATE task SET  task_is_set=1 WHERE task_id = "+task.getId();
+                database.queryData(updateTask);
+                task.setSet(true);
+            }
+        }
+    }
+
+    void setNotification(Task task){
+        Intent notifyIntent = new Intent(mContext, ReminderReceiver.class);
+        int id = task.getId();
+        String name = task.getName();
+        String describe = task.getDescribe();
+        String date = task.getDateYearMonth();
+        String time = task.getTime24Hour();
+        int repeatType = task.getRepeat();
+        notifyIntent.putExtra("task_id", id);
+        notifyIntent.putExtra("task_name", name);
+        notifyIntent.putExtra("task_describe", describe);
+        notifyIntent.putExtra("task_date", date);
+        notifyIntent.putExtra("task_time", time);
+        notifyIntent.putExtra("task_repeat", repeatType);
+        notifyIntent.putExtra("group_task_id", task.getGroupTaskId());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager = (AlarmManager) mContext.getSystemService(ALARM_SERVICE);
+        if (task.getRepeat() == 0){
+            alarmManager.set(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), pendingIntent);
+            mContext.startService(notifyIntent);
+        }else{
+            if (task.getRepeat() == 1){
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), AlarmManager.INTERVAL_DAY, pendingIntent);
+                mContext.startService(notifyIntent);
+            }
+            if (task.getRepeat() == 2) {
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), 7 * AlarmManager.INTERVAL_DAY, pendingIntent);
+                mContext.startService(notifyIntent);
+            }
+        }
+    }
+
+    long getTimeInMillis(Task task){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(task.getYear(), task.getMonth() - 1, task.getDay(), task.getHour(), task.getMinute(), 0);
+        return  calendar.getTimeInMillis();
     }
 
     public void dialogCreateTask() {
-        final Dialog dialog = new Dialog(this);
+        final Dialog dialog = new Dialog(mContext);
         dialog.setContentView(R.layout.dialog_create_task);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setTitle("Create Task");
@@ -113,7 +213,7 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
         Window dialogWindow = dialog.getWindow();
         WindowManager.LayoutParams layoutParams = dialogWindow.getAttributes();
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        ListTaskActivity.this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
 //        layoutParams.height = (int) (height * 0.9);
@@ -139,7 +239,7 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
                 String date = tvDateCreateDialog.getText().toString().trim();
                 boolean notify = cbNotify.isChecked();
                 if (name.length() <= 0){
-                    Toast.makeText(ListTaskActivity.this, "Empty name!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Empty name!", Toast.LENGTH_SHORT).show();
                 }else{
                     int hour;
                     int minute;
@@ -167,7 +267,7 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
                     }
 
                     String insertTask = "INSERT INTO task VALUES(NULL, '"+ name +"', '"+ describe +"', "+ day +","+ month +
-                    ", "+ year +", " +hour+ ", "+ minute +", "+ repeatType +", "+ intNotify +", "+ groupTaskID +", 0)";
+                            ", "+ year +", " +hour+ ", "+ minute +", "+ repeatType +", "+ intNotify +", "+ groupTaskID +", 0)";
                     database.queryData(insertTask);
                     updateListViewGroupTask();
                     dialog.dismiss();
@@ -205,7 +305,7 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
         dialog.show();
     }
     public void dialogEditTask(final Task task) {
-        final Dialog dialog = new Dialog(this);
+        final Dialog dialog = new Dialog(mContext);
         dialog.setContentView(R.layout.dialog_create_task);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setTitle("Edit Task");
@@ -213,7 +313,7 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
         Window dialogWindow = dialog.getWindow();
         WindowManager.LayoutParams layoutParams = dialogWindow.getAttributes();
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        ListTaskActivity.this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
 //        layoutParams.height = (int) (height * 0.9);
@@ -245,7 +345,7 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
                 String date = tvDateCreateDialog.getText().toString().trim();
                 boolean notify = cbNotify.isChecked();
                 if (name.length() <= 0){
-                    Toast.makeText(ListTaskActivity.this, "Empty name!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Empty name!", Toast.LENGTH_SHORT).show();
                 }else{
                     int hour;
                     int minute;
@@ -331,7 +431,7 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
             arrTask.add(task);
         }
         setTaskReminderAlarmManager();
-        taskAdapter = new TaskAdapter(this, R.layout.item_task, arrTask, this);
+        taskAdapter = new TaskAdapter(mContext, R.layout.item_task, arrTask, this);
         lvReminder.setAdapter(taskAdapter);
     }
 
@@ -340,7 +440,7 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
         int date = calendar.get(Calendar.DATE);
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(calendar.YEAR);
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
                 calendar.set(i, i1, i2);
@@ -355,7 +455,7 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
         final Calendar calendar = Calendar.getInstance();
         final int minute = calendar.get(Calendar.MINUTE);
         final int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(mContext, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int i, int i1) {
                 calendar.set(0, 0, 0, i, i1);
@@ -367,11 +467,11 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
     }
 
     void dialogRepeatType(){
-        final Dialog dialog = new Dialog(this);
+        final Dialog dialog = new Dialog(mContext);
         dialog.setContentView(R.layout.dialog_repeat_type);
         dialog.setTitle("Select repeat type");
         ListView lvRepeatType = dialog.findViewById(R.id.lvRepeatType);
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrRepeat);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(mContext, android.R.layout.simple_list_item_1, arrRepeat);
         lvRepeatType.setAdapter(arrayAdapter);
 
         lvRepeatType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -384,85 +484,4 @@ public class ListTaskActivity extends AppCompatActivity implements ShowPopup {
         });
         dialog.show();
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        updateListViewGroupTask();
-    }
-
-    @Override
-    public void showPopupMenu(Context context, View view, final int i){
-        PopupMenu popupMenu = new PopupMenu(context, view);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_group_task_item, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()){
-                    case R.id.menu_delete_group:
-                        String sql = "DELETE FROM task WHERE task_id ="+ arrTask.get(i).getId();
-                        database.queryData(sql);
-                        updateListViewGroupTask();
-                        return true;
-                    case R.id.menu_edit_group:
-                        dialogEditTask(arrTask.get(i));
-                        return true;
-                }
-                return false;
-            }
-        });
-        popupMenu.show();
-    }
-
-    void setTaskReminderAlarmManager(){
-        for (int i =0; i < arrTask.size(); i++){
-                Task task = arrTask.get(i);
-                //Log.d("AAAAA",task.isNotification()+" "+!task.isSet());
-                if (task.isNotification() && !task.isSet()){
-                    setNotification(task);
-                    String updateTask = "UPDATE task SET  task_is_set=1 WHERE task_id = "+task.getId();
-                    database.queryData(updateTask);
-                    task.setSet(true);
-                }
-            }
-    }
-
-    void setNotification(Task task){
-        Intent notifyIntent = new Intent(this, ReminderReceiver.class);
-        int id = task.getId();
-        String name = task.getName();
-        String describe = task.getDescribe();
-        String date = task.getDateYearMonth();
-        String time = task.getTime24Hour();
-        int repeatType = task.getRepeat();
-        notifyIntent.putExtra("task_id", id);
-        notifyIntent.putExtra("task_name", name);
-        notifyIntent.putExtra("task_describe", describe);
-        notifyIntent.putExtra("task_date", date);
-        notifyIntent.putExtra("task_time", time);
-        notifyIntent.putExtra("task_repeat", repeatType);
-        notifyIntent.putExtra("group_task_id", task.getGroupTaskId());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
-        if (task.getRepeat() == 0){
-            alarmManager.set(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), pendingIntent);
-            startService(notifyIntent);
-        }else{
-            if (task.getRepeat() == 1){
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), AlarmManager.INTERVAL_DAY, pendingIntent);
-                startService(notifyIntent);
-            }
-            if (task.getRepeat() == 2) {
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getTimeInMillis(task), 7 * AlarmManager.INTERVAL_DAY, pendingIntent);
-                startService(notifyIntent);
-            }
-        }
-    }
-
-    long getTimeInMillis(Task task){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(task.getYear(), task.getMonth() - 1, task.getDay(), task.getHour(), task.getMinute(), 0);
-        return  calendar.getTimeInMillis();
-    }
 }
-

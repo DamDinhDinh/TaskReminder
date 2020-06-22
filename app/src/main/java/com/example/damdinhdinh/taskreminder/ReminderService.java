@@ -2,16 +2,14 @@ package com.example.damdinhdinh.taskreminder;
 
 import android.app.IntentService;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationManagerCompat;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.example.damdinhdinh.taskreminder.database.DatabaseSQLite;
 import com.example.damdinhdinh.taskreminder.model.Task;

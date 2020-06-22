@@ -1,43 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".MainActivity">
-    <RelativeLayout
-        android:layout_margin="7dp"
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
-        <TextView
-            android:layout_margin="3dp"
-            android:background="@color/colorPrimaryDark"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/tv_add_new_group"
-            android:text="Create Group Task"
-            android:textSize="25sp"
-            android:gravity="center"
-            android:textColor="@color/colorWhite"/>
-        <ImageView
-            android:layout_margin="3dp"
-            android:backgroundTint="@color/colorWhite"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/icons8_plus_math_48"
-            android:id="@+id/img_icon_add_new_group"/>
-    </RelativeLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/lv_group_task">
 
-        </ListView>
-    </LinearLayout>
+    <fragment
+        android:id="@+id/nav_host_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="androidx.navigation.fragment.NavHostFragment"
 
-</LinearLayout>
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/app_navigation"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
