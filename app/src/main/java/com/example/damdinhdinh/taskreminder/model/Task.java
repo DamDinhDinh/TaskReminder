@@ -1,9 +1,15 @@
 package com.example.damdinhdinh.taskreminder.model;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
+@Entity(tableName = "tasks")
 public class Task implements Serializable {
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
     private String describe;
@@ -13,10 +19,12 @@ public class Task implements Serializable {
     private int hour;
     private int minute;
     private int repeat;
-    private ArrayList<String> arrRepeat;
+    @Ignore
+    private ArrayList<String> arrRepeat = new ArrayList<>();
     private boolean notification;
     private int groupTaskId;
     private boolean isSet;
+
     public Task(int id, String name, String describe, int day, int month, int year, int hour, int minute, int repeat, boolean notification) {
         this.id = id;
         this.name = name;
@@ -71,9 +79,6 @@ public class Task implements Serializable {
 
 
     public Task(){
-        id = -1;
-        name = "";
-        describe ="";
     }
     public String getName() {
         return name;

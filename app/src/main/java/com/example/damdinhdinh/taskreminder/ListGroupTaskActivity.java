@@ -68,17 +68,17 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
 
         arrGroupTask = new ArrayList<>();
 
-        database = new DatabaseSQLite(ListGroupTaskActivity.this, "task.sqlite", null, 1);
-//        String sql = "DROP TABLE groupTask";
-//        String sql1 = "DROP TABLE task";
-        String createTableGroupTask = "CREATE TABLE IF NOT EXISTS groupTask(groupTask_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "groupTask_name VARCHAR(200), groupTask_iconIndex INTEGER)";
-        database.queryData(createTableGroupTask);
-        String createTableTask = "CREATE TABLE IF NOT EXISTS task(task_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "task_name VARCHAR(200), task_describe VARCHAR (200), task_day INTEGER(2), task_month INTEGER(2), " +
-                "task_year INTEGER, task_hour INTEGER(2), task_minute INTEGER(2), task_repeat INTEGER(1), " +
-                "task_notify INTEGER(1), groupTask_id INTEGER, task_is_set INTEGER(1), FOREIGN KEY(groupTask_id) REFERENCES groupTask(groupTask_id))";
-        database.queryData(createTableTask);
+//        database = new DatabaseSQLite(ListGroupTaskActivity.this, "task.sqlite", null, 1);
+////        String sql = "DROP TABLE groupTask";
+////        String sql1 = "DROP TABLE task";
+//        String createTableGroupTask = "CREATE TABLE IF NOT EXISTS groupTask(groupTask_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                "groupTask_name VARCHAR(200), groupTask_iconIndex INTEGER)";
+//        database.queryData(createTableGroupTask);
+//        String createTableTask = "CREATE TABLE IF NOT EXISTS task(task_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                "task_name VARCHAR(200), task_describe VARCHAR (200), task_day INTEGER(2), task_month INTEGER(2), " +
+//                "task_year INTEGER, task_hour INTEGER(2), task_minute INTEGER(2), task_repeat INTEGER(1), " +
+//                "task_notify INTEGER(1), groupTask_id INTEGER, task_is_set INTEGER(1), FOREIGN KEY(groupTask_id) REFERENCES groupTask(groupTask_id))";
+//        database.queryData(createTableTask);
 //        database.queryData(sql);
 //        database.queryData(sql1);
 

@@ -1,15 +1,24 @@
 package com.example.damdinhdinh.taskreminder.model;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity(tableName = "group_tasks")
 public class GroupTask implements Serializable {
+
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
     private int icon;
-    private ArrayList<Task> arrTask;
+
+    @Ignore
+    private ArrayList<Task> arrTask = new ArrayList<>();
 
     public GroupTask(int id, String name, int icon, ArrayList<Task> arrTask) {
         this.id = id;
@@ -19,9 +28,6 @@ public class GroupTask implements Serializable {
     }
 
     public GroupTask(){
-        id = -1;
-        name = "";
-        arrTask = new ArrayList<>();
     }
 
     public String getName() {
