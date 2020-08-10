@@ -30,6 +30,11 @@ public class GroupTask implements Serializable {
     public GroupTask(){
     }
 
+    public GroupTask(String name, int icon) {
+        this.name = name;
+        this.icon = icon;;
+    }
+
     public String getName() {
         return name;
     }

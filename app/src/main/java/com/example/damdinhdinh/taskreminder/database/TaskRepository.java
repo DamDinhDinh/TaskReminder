@@ -16,7 +16,7 @@ public class TaskRepository implements TaskDataSource, GroupTaskDataSource {
     private GroupTaskDao mGroupTaskDao;
     private ExecutorService mDbService;
 
-    TaskRepository(Application application){
+    public TaskRepository(Application application){
         TaskRoomDatabase db = TaskRoomDatabase.getDatabase(application);
         mTaskDao = db.taskDao();
         mGroupTaskDao = db.groupTaskDao();

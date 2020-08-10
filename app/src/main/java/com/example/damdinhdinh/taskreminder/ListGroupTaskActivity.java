@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.example.damdinhdinh.taskreminder.adapter.GroupTaskAdapter;
 import com.example.damdinhdinh.taskreminder.database.DatabaseSQLite;
+import com.example.damdinhdinh.taskreminder.database.TaskRepository;
 import com.example.damdinhdinh.taskreminder.model.GroupTask;
 import com.example.damdinhdinh.taskreminder.model.Task;
 
@@ -46,6 +47,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
 
 public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopup{
     private ImageView imgNewGroupTask;
@@ -57,6 +59,8 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
     private AlarmManager alarmManager;
     final int RECORD_REQUEST_CODE = 5;
 
+    private TaskRepository mAppRepo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +70,7 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
         tvNewGroupTask = findViewById(R.id.tv_add_new_group);
         lvGroupTask = findViewById(R.id.lv_group_task);
 
+        mAppRepo = new TaskRepository(getApplication());
         arrGroupTask = new ArrayList<>();
 
 //        database = new DatabaseSQLite(ListGroupTaskActivity.this, "task.sqlite", null, 1);
@@ -85,13 +90,22 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
         SharedPreferences sharedPre = getSharedPreferences("setting", 0);
 
         if (sharedPre.getBoolean("first_time_open_app", true)) {
-            String sql = "INSERT INTO groupTask VALUES(NULL, 'Today'," + 0 + ")";
-            database.queryData(sql);
-            sql = "INSERT INTO groupTask VALUES(NULL, 'Exercise'," + 0 + ")";
-            database.queryData(sql);
-            sql = "INSERT INTO groupTask VALUES(NULL, 'Work'," + 0 + ")";
-            database.queryData(sql);
-            sharedPre.edit().putBoolean("first_time_open_app", false).commit();
+//            String sql = "INSERT INTO groupTask VALUES(NULL, 'Today'," + 0 + ")";
+//            database.queryData(sql);
+//            sql = "INSERT INTO groupTask VALUES(NULL, 'Exercise'," + 0 + ")";
+//            database.queryData(sql);
+//            sql = "INSERT INTO groupTask VALUES(NULL, 'Work'," + 0 + ")";
+//            database.queryData(sql);
+
+            GroupTask defaultToday = new GroupTask("Today", 0);
+            GroupTask defaultExercise = new GroupTask("Exercise", 0);
+            GroupTask defaultWork = new GroupTask("Work", 0);
+
+            mAppRepo.insertGroupTask(defaultToday);
+            mAppRepo.insertGroupTask(defaultExercise);
+            mAppRepo.insertGroupTask(defaultWork);
+
+            sharedPre.edit().putBoolean("first_time_open_app", false).apply();
         }
 
         updateListViewGroupTask();
@@ -121,8 +135,10 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.menu_delete_group:
-                                String sql = "DELETE FROM groupTask WHERE groupTask_id =" + arrGroupTask.get(i).getId();
-                                database.queryData(sql);
+//                                String sql = "DELETE FROM groupTask WHERE groupTask_id =" + arrGroupTask.get(i).getId();
+//                                database.queryData(sql);
+
+                                mAppRepo.deleteGroupTask(arrGroupTask.get(i));
                                 updateListViewGroupTask();
                                 return true;
                             case R.id.menu_edit_group:
@@ -166,8 +182,10 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
                 if (groupName.length() <= 0) {
                     Toast.makeText(ListGroupTaskActivity.this, "Empty name!", Toast.LENGTH_SHORT).show();
                 } else {
-                    String insertGroupTask = "INSERT INTO groupTask VALUES(NULL, '" + groupName + "'," + 0 + ")";
-                    database.queryData(insertGroupTask);
+//                    String insertGroupTask = "INSERT INTO groupTask VALUES(NULL, '" + groupName + "'," + 0 + ")";
+//                    database.queryData(insertGroupTask);
+                    GroupTask newGroupTask = new GroupTask(groupName, 0);
+                    mAppRepo.insertGroupTask(newGroupTask);
                     updateListViewGroupTask();
                     dialog.dismiss();
                 }
@@ -184,7 +202,7 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
         dialog.show();
     }
 
-    void dialogEditGroupTask(final GroupTask groupTask) {
+    void dialogEditGroupTask(final GroupTask editGroupTask) {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_create_group_task);
         dialog.setCanceledOnTouchOutside(false);
@@ -201,7 +219,7 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
         dialogWindow.setAttributes(layoutParams);
 
         final EditText edtGroupName = dialog.findViewById(R.id.edt_group_name);
-        edtGroupName.setText(groupTask.getName());
+        edtGroupName.setText(editGroupTask.getName());
 
 
         Button btnDone = dialog.findViewById(R.id.btn_done);
@@ -210,12 +228,14 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String groupName = edtGroupName.getText().toString().trim();
-                if (groupName.length() <= 0) {
+                String newName = edtGroupName.getText().toString().trim();
+                if (newName.length() <= 0) {
                     Toast.makeText(ListGroupTaskActivity.this, "Empty name!", Toast.LENGTH_SHORT).show();
                 } else {
-                    String insertGroupTask = "UPDATE groupTask SET groupTask_name = '" + groupName + "', groupTask_iconIndex = " + 0 + " WHERE groupTask_id =" + groupTask.getId();
-                    database.queryData(insertGroupTask);
+//                    String insertGroupTask = "UPDATE editGroupTask SET groupTask_name = '" + newName + "', groupTask_iconIndex = " + 0 + " WHERE groupTask_id =" + editGroupTask.getId();
+//                    database.queryData(insertGroupTask);
+                    editGroupTask.setName(newName);
+                    mAppRepo.updateGroupTask(editGroupTask);
                     updateListViewGroupTask();
                     dialog.dismiss();
                 }
@@ -233,33 +253,37 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
     }
 
     public void updateListViewGroupTask() {
-        arrGroupTask = new ArrayList<>();
-        Cursor dataGroupTask = database.getData("SELECT * FROM groupTask");
-        while (dataGroupTask.moveToNext()) {
-            int groupID = dataGroupTask.getInt(0);
-            String groupName = dataGroupTask.getString(1);
-            int iconIndex = dataGroupTask.getInt(2);
-            GroupTask groupTask = new GroupTask(groupID, groupName, iconIndex, new ArrayList<Task>());
-            Cursor dataTask = database.getData("SELECT * FROM task WHERE groupTask_id = " + groupID);
-            while (dataTask.moveToNext()) {
-                int id = dataTask.getInt(0);
-                String name = dataTask.getString(1);
-                String describe = dataTask.getString(2);
-                int day = dataTask.getInt(3);
-                int month = dataTask.getInt(4);
-                int year = dataTask.getInt(5);
-                int hour = dataTask.getInt(6);
-                int minute = dataTask.getInt(7);
-                int repeat = dataTask.getInt(8);
-                boolean notify = (dataTask.getInt(9) == 1);
-                int groupTaskId = dataTask.getInt(10);
-                boolean isSet = (dataTask.getInt(11) == 1);
-                Task task = new Task(id, name, describe, day, month, year, hour, minute, repeat, notify, isSet, groupTaskId);
-                groupTask.getArrTask().add(task);
-            }
-            arrGroupTask.add(groupTask);
-        }
-        //setTaskReminderAlarmManager();
+//        arrGroupTask = new ArrayList<>();
+//        Cursor dataGroupTask = database.getData("SELECT * FROM groupTask");
+//        while (dataGroupTask.moveToNext()) {
+//            int groupID = dataGroupTask.getInt(0);
+//            String groupName = dataGroupTask.getString(1);
+//            int iconIndex = dataGroupTask.getInt(2);
+//            GroupTask groupTask = new GroupTask(groupID, groupName, iconIndex, new ArrayList<Task>());
+//            Cursor dataTask = database.getData("SELECT * FROM task WHERE groupTask_id = " + groupID);
+//            while (dataTask.moveToNext()) {
+//                int id = dataTask.getInt(0);
+//                String name = dataTask.getString(1);
+//                String describe = dataTask.getString(2);
+//                int day = dataTask.getInt(3);
+//                int month = dataTask.getInt(4);
+//                int year = dataTask.getInt(5);
+//                int hour = dataTask.getInt(6);
+//                int minute = dataTask.getInt(7);
+//                int repeat = dataTask.getInt(8);
+//                boolean notify = (dataTask.getInt(9) == 1);
+//                int groupTaskId = dataTask.getInt(10);
+//                boolean isSet = (dataTask.getInt(11) == 1);
+//                Task task = new Task(id, name, describe, day, month, year, hour, minute, repeat, notify, isSet, groupTaskId);
+//                groupTask.getArrTask().add(task);
+//            }
+//            arrGroupTask.add(groupTask);
+//        }
+//        setTaskReminderAlarmManager();
+
+        arrGroupTask.clear();
+        arrGroupTask.addAll(Objects.requireNonNull(mAppRepo.getAllGroupTask().getValue()));
+
         groupTaskAdapter = new GroupTaskAdapter(this, R.layout.item_group_task, arrGroupTask, this);
         lvGroupTask.setAdapter(groupTaskAdapter);
     }
@@ -324,7 +348,7 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
         updateListViewGroupTask();
     }
 
-    public void showPopupMenu(Context context, View view, final int i) {
+    public void showPopupMenu(Context context, View view, final int position) {
         PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.getMenuInflater().inflate(R.menu.menu_group_task_item, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -332,12 +356,13 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.menu_delete_group:
-                        String sql = "DELETE FROM groupTask WHERE groupTask_id =" + arrGroupTask.get(i).getId();
-                        database.queryData(sql);
+//                        String sql = "DELETE FROM groupTask WHERE groupTask_id =" + arrGroupTask.get(position).getId();
+//                        database.queryData(sql);
+                        mAppRepo.deleteGroupTask(arrGroupTask.get(position));
                         updateListViewGroupTask();
                         return true;
                     case R.id.menu_edit_group:
-                        dialogEditGroupTask(arrGroupTask.get(i));
+                        dialogEditGroupTask(arrGroupTask.get(position));
                         return true;
                 }
                 return false;
@@ -401,31 +426,56 @@ public class ListGroupTaskActivity extends AppCompatActivity implements ShowPopu
 //                    pw.println(taskData);
 //                }
 //            }
-            Cursor dataGroupTask = database.getData("SELECT * FROM groupTask");
-            int count = 0;
-            while (dataGroupTask.moveToNext()) {
-                int groupID = dataGroupTask.getInt(0);
-                String groupName = dataGroupTask.getString(1);
-                int iconIndex = dataGroupTask.getInt(2);
-                String groupData = groupID+"---"+groupName+"---"+iconIndex+"---"+arrGroupTask.get(count).getArrTask().size();
-                count++;
-                pw.println(groupData);
-                Cursor dataTask = database.getData("SELECT * FROM task WHERE groupTask_id = " + groupID);
-                while (dataTask.moveToNext()) {
-                    int id = dataTask.getInt(0);
-                    String name = dataTask.getString(1);
-                    String describe = dataTask.getString(2);
-                    int day = dataTask.getInt(3);
-                    int month = dataTask.getInt(4);
-                    int year = dataTask.getInt(5);
-                    int hour = dataTask.getInt(6);
-                    int minute = dataTask.getInt(7);
-                    int repeat = dataTask.getInt(8);
-                    int notify = dataTask.getInt(9);
-                    int groupTaskId = dataTask.getInt(10);
-                    int isSet = dataTask.getInt(11);
-                    String taskData = id+"---"+name+"---"+describe+"---"+day+"---"+month+"---"+year+"---"+hour+"---"+minute+"---"+repeat+"---"+notify+"---"+groupTaskId+"---"+isSet;
-                    pw.println(taskData);
+//            Cursor dataGroupTask = database.getData("SELECT * FROM groupTask");
+//            int count = 0;
+//            while (dataGroupTask.moveToNext()) {
+//                int groupID = dataGroupTask.getInt(0);
+//                String groupName = dataGroupTask.getString(1);
+//                int iconIndex = dataGroupTask.getInt(2);
+//                String groupData = groupID+"---"+groupName+"---"+iconIndex+"---"+arrGroupTask.get(count).getArrTask().size();
+//                count++;
+//                pw.println(groupData);
+//                Cursor dataTask = database.getData("SELECT * FROM task WHERE groupTask_id = " + groupID);
+//                while (dataTask.moveToNext()) {
+//                    int id = dataTask.getInt(0);
+//                    String name = dataTask.getString(1);
+//                    String describe = dataTask.getString(2);
+//                    int day = dataTask.getInt(3);
+//                    int month = dataTask.getInt(4);
+//                    int year = dataTask.getInt(5);
+//                    int hour = dataTask.getInt(6);
+//                    int minute = dataTask.getInt(7);
+//                    int repeat = dataTask.getInt(8);
+//                    int notify = dataTask.getInt(9);
+//                    int groupTaskId = dataTask.getInt(10);
+//                    int isSet = dataTask.getInt(11);
+//                    String taskData = id+"---"+name+"---"+describe+"---"+day+"---"+month+"---"+year+"---"+hour+"---"+minute+"---"+repeat+"---"+notify+"---"+groupTaskId+"---"+isSet;
+//                    pw.println(taskData);
+//                }
+//            }
+
+            for (GroupTask exportGroupTask : arrGroupTask) {
+                String exportGroupLine = exportGroupTask.getId()
+                        +"---"+exportGroupTask.getName()
+                        +"---"+exportGroupTask.getIcon()
+                        +"---"+exportGroupTask.getArrTask().size();
+                pw.println(exportGroupLine);
+
+                ArrayList<Task> listTaskBelongTo = (ArrayList<Task>) mAppRepo.getAllTaskByGroupTaskId(exportGroupTask.getId()).getValue();
+                for (Task exportTask : listTaskBelongTo) {
+                    String exportTaskLine = exportTask.getId()
+                            +"---"+exportTask.getName()
+                            +"---"+exportTask.getDescribe()
+                            +"---"+exportTask.getDay()
+                            +"---"+exportTask.getMonth()
+                            +"---"+exportTask.getYear()
+                            +"---"+exportTask.getHour()
+                            +"---"+exportTask.getMinute()
+                            +"---"+exportTask.getRepeat()
+                            +"---"+(exportTask.isNotification() ? 1 : 0)
+                            +"---"+exportTask.getGroupTaskId()
+                            +"---"+(exportTask.isSet() ? 1 : 0);
+                    pw.println(exportTaskLine);
                 }
             }
 
