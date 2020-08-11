@@ -11,6 +11,8 @@ public interface GroupTaskDataSource {
 
     LiveData<List<GroupTask>> getAllGroupTask();
 
+    LiveData<GroupTask> getGroupTaskByName(String name);
+
     LiveData<GroupTask> getGroupTaskById(int id);
 
     LiveData<List<Task>> getAllTaskByGroupTaskId(int groupTaskId);

@@ -19,6 +19,9 @@ public interface GroupTaskDao {
     @Query("SELECT * FROM group_tasks ORDER BY id")
     LiveData<List<GroupTask>> getAllGroupTask();
 
+    @Query("SELECT * FROM group_tasks WHERE name = :name")
+    LiveData<GroupTask> getGroupTaskByName(String name);
+
     @Query("SELECT * FROM group_tasks WHERE id = :id")
     LiveData<GroupTask> getGroupTaskById(int id);
 

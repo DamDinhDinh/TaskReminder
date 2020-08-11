@@ -34,6 +34,16 @@ public class TaskRepository implements TaskDataSource, GroupTaskDataSource {
     }
 
     @Override
+    public LiveData<GroupTask> getGroupTaskByName(String name) {
+        return mGroupTaskDao.getGroupTaskByName(name);
+    }
+
+    @Override
+    public LiveData<Task> getTaskByName(String name) {
+        return mTaskDao.getTaskByName(name);
+    }
+
+    @Override
     public LiveData<List<Task>> getAllTaskByGroupTaskId(int groupTaskId) {
         return mGroupTaskDao.getAllTaskByGroupTaskId(groupTaskId);
     }

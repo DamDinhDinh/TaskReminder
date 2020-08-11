@@ -11,6 +11,8 @@ public interface TaskDataSource {
 
     LiveData<Task> getTaskById(int id);
 
+    LiveData<Task> getTaskByName(String name);
+
     void insertTask(Task task);
 
     void updateTask(Task task);

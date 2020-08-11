@@ -80,6 +80,25 @@ public class Task implements Serializable {
 
     public Task(){
     }
+
+    public Task(String taskName, String describe, int day, int month, int year, int hour, int minute, int repeat, boolean notify, int groupTaskId, boolean isSet) {
+        this.name = taskName;
+        this.describe = describe;
+        this.day = day;
+        this.month = month;
+        this.year = year;
+        this.hour = hour;
+        this.minute = minute;
+        this.repeat = repeat;
+        this.notification = notify;
+        this.groupTaskId = groupTaskId;
+        this.isSet = isSet;
+        arrRepeat = new ArrayList<>();
+        arrRepeat.add("Does not repeat");
+        arrRepeat.add("Every day");
+        arrRepeat.add("Every week");
+    }
+
     public String getName() {
         return name;
     }

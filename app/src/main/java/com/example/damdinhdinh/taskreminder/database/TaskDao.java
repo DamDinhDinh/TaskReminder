@@ -20,6 +20,9 @@ public interface TaskDao {
     @Query("SELECT * FROM tasks WHERE id = :id")
     LiveData<Task> getTaskById(int id);
 
+    @Query("SELECT * FROM tasks WHERE name = :name")
+    LiveData<Task> getTaskByName(String name);
+
     @Insert
     void insertTask(Task task);
 
